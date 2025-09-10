@@ -2,8 +2,20 @@ import streamlit as st
 import requests
 
 st.title("AA Assistant - Document Query")
-
 query = st.text_input("Enter your question: ")
+
+# if st.button("Submit") and query:
+#     response = requests.post("http://127.0.0.1:8000/query", json={"query": query})
+#     if response.status_code == 200:
+#         data = response.json()
+#         st.subheader("Answer: ")
+#         st.write(data["answer"])
+#         st.subheader("Sources: ")
+#         for src in data["source"]:
+#             st.write(f"- {src}")
+#     else:
+#         st.error("Failed to get response from API")
+
 
 if st.button("Submit") and query:
     response = requests.post("http://127.0.0.1:8000/query", json={"query": query})
@@ -12,7 +24,16 @@ if st.button("Submit") and query:
         st.subheader("Answer: ")
         st.write(data["answer"])
         st.subheader("Sources: ")
-        for src in data["source"]:
-            st.write(f"- {src}")
+        sources = data["source"]
+        #If sources is string print directly
+        if isinstance(sources, str):
+            st.write(f"- {sources}")
+        #If its list, iterate over it
+        elif isinstance(sources, list):
+            for src in sources:
+                st.write(f"- {src}")
+        else:
+            st.write("No valid sources found")
     else:
         st.error("Failed to get response from API")
+
